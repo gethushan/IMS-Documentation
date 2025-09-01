@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IMS API Documentation</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 40px;
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .search-container {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .search-box {
+        width: 100%;
+        max-width: 500px;
+        padding: 15px 20px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        outline: none;
+      }
+
+      .api-sections {
+        display: grid;
+        gap: 20px;
+      }
+
+      .api-section {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .api-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .section-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.3s ease;
+      }
+
+      .section-header:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .section-description {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-top: 5px;
+      }
+
+      .toggle-icon {
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .section-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .section-content.active {
+        max-height: 2000px;
+      }
+
+      .endpoint {
+        border-bottom: 1px solid #eee;
+        padding: 20px;
+      }
+
+      .endpoint:last-child {
+        border-bottom: none;
+      }
+
+      .endpoint-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+        cursor: pointer;
+      }
+
+      .method {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .method.get {
+        background: #61affe;
+        color: white;
+      }
+      .method.post {
+        background: #49cc90;
+        color: white;
+      }
+      .method.put {
+        background: #fca130;
+        color: white;
+      }
+      .method.delete {
+        background: #f93e3e;
+        color: white;
+      }
+      .method.patch {
+        background: #50e3c2;
+        color: white;
+      }
+
+      .endpoint-path {
+        font-family: "Courier New", monospace;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .endpoint-title {
+        font-weight: 600;
+        color: #555;
+      }
+
+      .endpoint-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 5px;
+      }
+
+      .endpoint-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-top: 15px;
+      }
+
+      .endpoint-details.active {
+        max-height: 1000px;
+      }
+
+      .details-content {
+        padding: 20px;
+      }
+
+      .detail-section {
+        margin-bottom: 20px;
+      }
+
+      .detail-section h4 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 1rem;
+      }
+
+      .code-block {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+        margin: 10px 0;
+      }
+
+      .response-example {
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+      }
+
+      .response-example h5 {
+        color: #2d3748;
+        margin-bottom: 10px;
+      }
+
+      .status-code {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+
+      .status-200 {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .status-400 {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .status-401 {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .status-500 {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .footer {
+        text-align: center;
+        color: white;
+        margin-top: 40px;
+        padding: 20px;
+        opacity: 0.8;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .endpoint-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .container {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1><i class="fas fa-book"></i> IMS API Documentation</h1>
+        <p>Internship Management System - Complete API Reference</p>
+      </div>
+
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-box"
+          placeholder="Search endpoints..."
+          id="searchBox"
+        />
+      </div>
+
+      <div class="api-sections" id="apiSections">
+        <!-- API sections will be populated by JavaScript -->
+      </div>
+
+      <div class="footer">
+        <p>&copy; 2024 IMS API Documentation. Built with ❤️ for developers.</p>
+      </div>
+    </div>
+
+    <script src="api-data.js"></script>
+    <script>
+      // Use the comprehensive API data from external file
+      const apiData = window.completeApiData || {
+        // Fallback data if external file fails to load
+        Authentication: {
+          description:
+            "User authentication, registration, and profile management",
+          endpoints: [],
+        },
+      };
+
+      // Initialize the documentation
+      function initDocumentation() {
+        const container = document.getElementById("apiSections");
+
+        Object.entries(apiData).forEach(([sectionName, sectionData]) => {
+          const section = createSection(sectionName, sectionData);
+          container.appendChild(section);
+        });
+      }
+
+      // Create a section element
+      function createSection(sectionName, sectionData) {
+        const section = document.createElement("div");
+        section.className = "api-section";
+
+        section.innerHTML = `
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div>
+                        <div class="section-title">${sectionName}</div>
+                        <div class="section-description">${
+                          sectionData.description
+                        }</div>
+                    </div>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </div>
+                <div class="section-content">
+                    ${sectionData.endpoints
+                      .map((endpoint) => createEndpointHTML(endpoint))
+                      .join("")}
+                </div>
+            `;
+
+        return section;
+      }
+
+      // Create endpoint HTML
+      function createEndpointHTML(endpoint) {
+        return `
+                <div class="endpoint">
+                    <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                        <span class="method ${endpoint.method.toLowerCase()}">${
+          endpoint.method
+        }</span>
+                        <span class="endpoint-path">${endpoint.path}</span>
+                        <span class="endpoint-title">${endpoint.title}</span>
+                        <i class="fas fa-chevron-right toggle-icon"></i>
+                    </div>
+                    <div class="endpoint-description">${
+                      endpoint.description
+                    }</div>
+                    <div class="endpoint-details">
+                        <div class="details-content">
+                            ${createDetailsHTML(endpoint.details)}
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      // Create details HTML
+      function createDetailsHTML(details) {
+        let html = "";
+
+        Object.entries(details).forEach(([detailType, detailData]) => {
+          html += `<div class="detail-section">`;
+          html += `<h4>${detailType}</h4>`;
+
+          if (
+            detailType === "Request Body" ||
+            detailType === "Headers" ||
+            detailType === "Query Parameters"
+          ) {
+            html += `<div class="code-block">${JSON.stringify(
+              detailData,
+              null,
+              2
+            )}</div>`;
+          } else if (detailType === "Response") {
+            Object.entries(detailData).forEach(([statusCode, responseData]) => {
+              html += `<div class="response-example">`;
+              html += `<h5><span class="status-code status-${statusCode}">${statusCode}</span>Response</h5>`;
+              html += `<div class="code-block">${JSON.stringify(
+                responseData,
+                null,
+                2
+              )}</div>`;
+              html += `</div>`;
+            });
+          }
+
+          html += `</div>`;
+        });
+
+        return html;
+      }
+
+      // Toggle section visibility
+      function toggleSection(header) {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector(".toggle-icon");
+
+        content.classList.toggle("active");
+        icon.style.transform = content.classList.contains("active")
+          ? "rotate(180deg)"
+          : "rotate(0deg)";
+      }
+
+      // Toggle endpoint details
+      function toggleEndpoint(header) {
+        const details = header.parentElement.querySelector(".endpoint-details");
+        const icon = header.querySelector(".toggle-icon");
+
+        details.classList.toggle("active");
+        icon.style.transform = details.classList.contains("active")
+          ? "rotate(90deg)"
+          : "rotate(0deg)";
+      }
+
+      // Search functionality
+      function initSearch() {
+        const searchBox = document.getElementById("searchBox");
+        searchBox.addEventListener("input", function () {
+          const searchTerm = this.value.toLowerCase();
+          const sections = document.querySelectorAll(".api-section");
+
+          sections.forEach((section) => {
+            const endpoints = section.querySelectorAll(".endpoint");
+            let hasMatch = false;
+
+            endpoints.forEach((endpoint) => {
+              const title = endpoint
+                .querySelector(".endpoint-title")
+                .textContent.toLowerCase();
+              const description = endpoint
+                .querySelector(".endpoint-description")
+                .textContent.toLowerCase();
+              const path = endpoint
+                .querySelector(".endpoint-path")
+                .textContent.toLowerCase();
+
+              if (
+                title.includes(searchTerm) ||
+                description.includes(searchTerm) ||
+                path.includes(searchTerm)
+              ) {
+                endpoint.style.display = "block";
+                hasMatch = true;
+              } else {
+                endpoint.style.display = "none";
+              }
+            });
+
+            section.style.display = hasMatch ? "block" : "none";
+          });
+        });
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initDocumentation();
+        initSearch();
+      });
+    </script>
+  </body>
+</html>
